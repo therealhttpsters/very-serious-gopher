@@ -1,0 +1,25 @@
+
+             ===== Welcome to a Very Serious GOPHER Server! =====
+
+We have less than 1% of the written documents from Rome. We have less than 0.5% of 
+the documents from Ancient Greece. Only three codices of the Mayan civilization 
+remain. The internet’s power is its ability to give us an incredible, boundless 
+storage. But have we actually built into our software design patterns a notion of 
+longterm thinking? We want to think about our life’s work, and we want to preserve 
+content, access to it and inspire others to think for the long term. Time is comprised of snapshots, and we’re seeking understanding for the whole.
+
+In the same spirit of projects like the Internet Archive seeking to bring access to 
+information to preserve history, we believe it’s also a responsibility to understand 
+where we’ve come from, how we’ve built it and where we might be headed. This also 
+matters for the tools in which we create.
+
+On the quest to share content creation’s history, we also decided to make something. 
+Something that was extremely accessible for both people and machines. Here's our 
+weird, wild journey of our attempt to create the "Most Compatible Thing™," built for 
+legacy support by design. Yes, there will be GIFs.
+
+Powered by the magic of WordPress and Gutenberg, we used lots of pixelcraft and a 
+custom web server to create paired experiences for each media. From modern headless 
+future-facing web technologies to the GOPHER protocol, from Twitter bots to TTYs,
+from phone calls to a snail mail service, we've got a story to share that we hope
+will last and be preserved. All you gotta do is look for it. 
