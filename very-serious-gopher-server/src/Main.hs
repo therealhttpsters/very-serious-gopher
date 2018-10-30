@@ -3,20 +3,30 @@
 import Network.Gopher
 import Control.Concurrent
 import Control.Monad
--- import Control.Exception
+import System.Environment
+import Network.Socket
 
-app :: GopherApp
-app _ = let
+import qualified Data.Text          as T
+
+
+appBuilder :: T.Text -> PortNumber -> GopherApp
+appBuilder host port = let
       k =  Record { recName = "Very Serious Things are Coming"
-      , recSelector = "AAAA"
-      , recHost = "localhost"
-      , recPort = 8080
+      , recSelector = ""
+      , recHost = host
+      , recPort = port
       , recOther = []
       }
    in
-      pure $ Items [Listing PlainText k]
+      \_ -> pure $ Items [Listing PlainText k]
 
 main :: IO ()
 main = do
-   runGopherApp 8080 app
+   dataPath <- getEnv "GOPHER_POST_DATA"
+   serverHost <- T.pack <$> getEnv "GOPHER_HOST"
+   serverPort <- (\port -> read port :: PortNumber) <$> getEnv "GOPHER_PORT"
+   putStrLn dataPath
+   putStrLn $ show serverHost
+   putStrLn $ show serverPort
+   runGopherApp serverPort $ appBuilder serverHost serverPort
    (forever (threadDelay 1))
