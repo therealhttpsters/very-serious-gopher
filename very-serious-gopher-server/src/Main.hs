@@ -33,23 +33,25 @@ topRow host port name =  Record { recName = name
       }
 
 
-appBuilder :: T.Text -> PortNumber -> [Listing] -> GopherApp
-appBuilder host port motd = let
-      postNames = (filter (\x -> (T.isSuffixOf ".post") (T.pack x)) ) <$> (getDirectoryContents "./data")
-      postContent = (mapM readFile) =<< (map (\x -> "./data/" ++ x)) <$> postNames
-      lookupTable = zip <$> postNames <*> postContent
-      postIndex = map (\(name, _) -> Listing PlainText $ ((topRow host port) . T.pack) name) <$> lookupTable
+appBuilder :: T.Text -> PortNumber -> [Listing] -> [([Char], [Char])] -> GopherApp
+appBuilder host port motd lookupTable = let
+      postIndex = map (\(name, _) -> Listing PlainText $ ((topRow host port) . T.pack) name) $ lookupTable
    in
-      \_ -> Items <$> liftA2 (++) (pure motd) postIndex
+      \_ -> Items <$> liftA2 (++) (pure motd) (pure postIndex)
 
 main :: IO ()
 main = do
+   -- Environment variables
    dataPath <- getEnv "GOPHER_POST_DATA"
    serverHost <- T.pack <$> getEnv "GOPHER_HOST"
    serverPort <- (\port -> read port :: PortNumber) <$> getEnv "GOPHER_PORT"
+
+   -- Get post content into memory
    motd <- linesToMOTD serverHost serverPort <$> splitOn "\n" <$> readFile "./motd.txt"
-   putStrLn $ dataPath
-   putStrLn $ show serverHost
-   putStrLn $ show serverPort
-   runGopherApp serverPort $ appBuilder serverHost serverPort motd
-   (forever (threadDelay 1))
+   postNames <- (filter (\x -> (T.isSuffixOf ".post") (T.pack x)) ) <$> (getDirectoryContents dataPath)
+   postContent <- (mapM readFile) (map (\x -> dataPath ++ x) postNames)
+   lookupTable <- liftA2 zip (pure postNames) (pure postContent)
+
+   -- Run the Server
+   runGopherApp serverPort $ appBuilder serverHost serverPort motd lookupTable
+   (forever (threadDelay 1000))
