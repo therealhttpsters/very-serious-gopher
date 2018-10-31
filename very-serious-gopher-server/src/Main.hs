@@ -23,8 +23,8 @@ linesToMOTD host port messageLines = let
    in
       map toListing messageLines
 
-topRow :: T.Text -> PortNumber -> T.Text -> Record
-topRow host port name =  Record { recName = name
+postRow :: T.Text -> PortNumber -> T.Text -> Record
+postRow host port name =  Record { recName = name
       , recSelector = name
       , recHost = host
       , recPort = port
@@ -34,7 +34,7 @@ topRow host port name =  Record { recName = name
 
 appBuilder :: T.Text -> PortNumber -> [Listing] -> [([Char], [Char])] -> GopherApp
 appBuilder host port motd lookupTable = let
-      postIndex = map (\(name, _) -> Listing PlainText $ ((topRow host port) . T.pack) name) $ lookupTable
+      postIndex = map (\(name, _) -> Listing PlainText $ ((postRow host port) . T.pack) name) $ lookupTable
    in
       \_ -> pure $ Items (motd ++ postIndex)
 
@@ -53,4 +53,4 @@ main = do
 
    -- Run the Server
    runGopherApp serverPort $ appBuilder serverHost serverPort motd lookupTable
-   (forever (threadDelay 1000))
+   forever (threadDelay 1000)
