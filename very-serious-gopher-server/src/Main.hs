@@ -3,7 +3,6 @@
 import Network.Gopher
 import Control.Concurrent
 import Control.Monad
-import Control.Applicative
 
 import System.Environment
 import System.Directory
@@ -37,7 +36,7 @@ appBuilder :: T.Text -> PortNumber -> [Listing] -> [([Char], [Char])] -> GopherA
 appBuilder host port motd lookupTable = let
       postIndex = map (\(name, _) -> Listing PlainText $ ((topRow host port) . T.pack) name) $ lookupTable
    in
-      \_ -> Items <$> liftA2 (++) (pure motd) (pure postIndex)
+      \_ -> pure $ Items (motd ++ postIndex)
 
 main :: IO ()
 main = do
@@ -50,7 +49,7 @@ main = do
    motd <- linesToMOTD serverHost serverPort <$> splitOn "\n" <$> readFile "./motd.txt"
    postNames <- (filter (\x -> (T.isSuffixOf ".post") (T.pack x)) ) <$> (getDirectoryContents dataPath)
    postContent <- (mapM readFile) (map (\x -> dataPath ++ x) postNames)
-   lookupTable <- liftA2 zip (pure postNames) (pure postContent)
+   lookupTable <- pure $ zip postNames postContent
 
    -- Run the Server
    runGopherApp serverPort $ appBuilder serverHost serverPort motd lookupTable
