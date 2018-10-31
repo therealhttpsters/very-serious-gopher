@@ -37,6 +37,7 @@ executable vrysrs
                      , network
                      , text
                      , split
+                     , directory
   ghc-options:         -O2
                        -Wall
                        -Werror
