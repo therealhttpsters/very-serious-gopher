@@ -26,3 +26,19 @@ library
                        -Wall
                        -Werror
                        -Wno-unused-do-bind
+
+executable vrysrs
+  main-is:     Main.hs
+  hs-source-dirs: src
+  default-language:    Haskell2010
+  other-modules:       Network.Gopher	
+  build-depends:       base >=4.11 && <4.12
+                     , bytestring
+                     , network
+                     , text
+                     , split
+                     , directory
+  ghc-options:         -O2
+                       -Wall
+                       -Werror
+                       -Wno-unused-do-bind
