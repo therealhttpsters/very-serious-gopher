@@ -9,6 +9,9 @@ import System.Directory
 
 import Network.Socket
 
+import qualified Data.ByteString         as BS
+import qualified Data.Char         as DC
+
 import Data.List.Split
 import qualified Data.Text          as T
 
@@ -23,20 +26,35 @@ linesToMOTD host port messageLines = let
    in
       map toListing messageLines
 
-postRow :: T.Text -> PortNumber -> T.Text -> Record
-postRow host port name =  Record { recName = name
-      , recSelector = name
+postRow :: T.Text -> PortNumber -> T.Text  -> T.Text -> Record
+postRow host port selector name =  Record { recName = name
+      , recSelector = selector
       , recHost = host
       , recPort = port
       , recOther = []
       }
 
+getSinglePost :: T.Text -> PortNumber -> [([Char], [Char])] -> BS.ByteString -> [Listing]
+getSinglePost host port table s = let
+   filename = map (DC.chr . fromIntegral) $ BS.unpack $ BS.filter (\c -> c /= 13) s
+   posts = filter (\(name, _) -> name == filename) table
+   postContent = case posts of
+                  [] -> "Not found"
+                  p  -> (snd . head) p
+   in
+      linesToMOTD host port $ splitOn "\n" postContent
+
 
 appBuilder :: T.Text -> PortNumber -> [Listing] -> [([Char], [Char])] -> GopherApp
 appBuilder host port motd lookupTable = let
-      postIndex = map (\(name, _) -> Listing PlainText $ ((postRow host port) . T.pack) name) $ lookupTable
+      row = postRow host port
+      back = Listing Directory $ row "" "Back"
+      postList = map (\(name, _) -> Listing Directory $ row (T.pack name) (T.pack name)) $ lookupTable
+      postIndex = [Listing Info $ row "" "Index", Listing Info $ row "" ""] ++ postList
    in
-      \_ -> pure $ Items (motd ++ postIndex)
+      \selector -> case selector of 
+                        "\r" -> pure $ Items (motd ++ postIndex)
+                        s -> pure $ Items $ (getSinglePost host port lookupTable s) ++ [back]
 
 main :: IO ()
 main = do

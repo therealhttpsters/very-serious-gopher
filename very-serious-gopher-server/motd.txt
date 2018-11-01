@@ -23,6 +23,3 @@ custom web server to create paired experiences for each media. From modern headl
 future-facing web technologies to the GOPHER protocol, from Twitter bots to TTYs,
 from phone calls to a snail mail service, we've got a story to share that we hope
 will last and be preserved. All you gotta do is look for it. 
-
-
-Index
