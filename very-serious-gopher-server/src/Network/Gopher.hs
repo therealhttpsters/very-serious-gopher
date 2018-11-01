@@ -141,6 +141,5 @@ handleConn app (sock, _) = void $ timeout 180000000 $ do
     hdl <- socketToHandle sock ReadWriteMode
     req <- BS.hGetLine hdl
     resp <- responseBuilder <$> app req
-    putStrLn $ show req
     BU.hPutBuilder hdl (resp <> BU.string7 ".\r\n")
     hClose hdl
